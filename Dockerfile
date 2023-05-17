@@ -32,6 +32,7 @@ RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
 RUN apt-get -yy install nodejs
 RUN locale-gen en_US.UTF-8
 RUN python3 -m pip install -U pip
+RUN python3 -m pip install --no-cache-dir --upgrade pip
 
 # Install .NET Core
 RUN wget -q https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb && \
@@ -77,19 +78,19 @@ WORKDIR /home/test
 ### Install smart contract testing tools
 RUN mkdir /home/test/tools
 
-# # Install ilf
-# COPY --chown=test:test ./docker-setup/ilf/ /home/test/tools/ilf
-# ENV GOPATH=/home/test/tools/ilf/go
-# ENV GOROOT=/usr/lib/go-1.10
-# ENV PATH=$PATH:$GOPATH/bin
-# ENV PATH=$PATH:$GOROOT/bin
-# RUN /home/test/tools/ilf/install_ilf.sh
-# RUN mv /home/test/tools/ilf/preprocess \
-#        /home/test/tools/ilf/go/src/ilf/preprocess
+# # # Install ilf
+# # COPY --chown=test:test ./docker-setup/ilf/ /home/test/tools/ilf
+# # ENV GOPATH=/home/test/tools/ilf/go
+# # ENV GOROOT=/usr/lib/go-1.10
+# # ENV PATH=$PATH:$GOPATH/bin
+# # ENV PATH=$PATH:$GOROOT/bin
+# # RUN /home/test/tools/ilf/install_ilf.sh
+# # RUN mv /home/test/tools/ilf/preprocess \
+# #        /home/test/tools/ilf/go/src/ilf/preprocess
 
-# Install sFuzz
-# COPY --chown=test:test ./docker-setup/sFuzz /home/test/tools/sFuzz
-# RUN /home/test/tools/sFuzz/install_sFuzz.sh
+# # Install sFuzz
+# # COPY --chown=test:test ./docker-setup/sFuzz /home/test/tools/sFuzz
+# # RUN /home/test/tools/sFuzz/install_sFuzz.sh
 
 # Install manticore
 COPY --chown=test:test ./docker-setup/manticore/ /home/test/tools/manticore
@@ -97,26 +98,26 @@ RUN /home/test/tools/manticore/install_manticore.sh
 ENV PATH /home/test/.local/bin:$PATH
 ENV LD_LIBRARY_PATH=/usr/local/lib PREFIX=/usr/local HOST_OS=Linux
 
-# Install mythril
-# COPY --chown=test:test ./docker-setup/mythril/ /home/test/tools/mythril
-# ENV LANG en_US.UTF-8
-# ENV LANGUAGE en_US.en
-# ENV LC_ALL en_US.UTF-8
-# RUN /home/test/tools/mythril/install_mythril.sh
+# # Install mythril
+# # COPY --chown=test:test ./docker-setup/mythril/ /home/test/tools/mythril
+# # ENV LANG en_US.UTF-8
+# # ENV LANGUAGE en_US.en
+# # ENV LC_ALL en_US.UTF-8
+# # RUN /home/test/tools/mythril/install_mythril.sh
 
-# Install Smartian
-# RUN cd /home/test/tools/ && \
-#     git clone https://github.com/SoftSec-KAIST/Smartian.git && \
-#     cd Smartian && \
-#     git checkout v1.0 && \
-#     git submodule update --init --recursive && \
-#     make
+# # Install Smartian
+# # RUN cd /home/test/tools/ && \
+# #     git clone https://github.com/SoftSec-KAIST/Smartian.git && \
+# #     cd Smartian && \
+# #     git checkout v1.0 && \
+# #     git submodule update --init --recursive && \
+# #     make
 
-# Add scripts for each tool
-COPY --chown=test:test ./docker-setup/tool-scripts/ /home/test/scripts
+# # Add scripts for each tool
+# COPY --chown=test:test ./docker-setup/tool-scripts/ /home/test/scripts
 
-### Prepare benchmarks
+# ### Prepare benchmarks
 
-COPY --chown=test:test ./benchmarks /home/test/benchmarks
+# COPY --chown=test:test ./benchmarks /home/test/benchmarks
 
-CMD ["/bin/bash"]
+# CMD ["/bin/bash"]
