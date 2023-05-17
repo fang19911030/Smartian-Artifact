@@ -25,8 +25,6 @@ for i in $(seq $1); do
     python $SCRIPTDIR/run_experiment.py B2 smartian 3600
     python $SCRIPTDIR/run_experiment.py B2 ilf 3600
     python $SCRIPTDIR/run_experiment.py B2 sFuzz 3600
-    python $SCRIPTDIR/run_experiment.py B2 manticore 3600 B2
-    python $SCRIPTDIR/run_experiment.py B2 mythril 3600
 done
 mkdir -p $OUTDIR/result-B2-compare/smartian
 mv $OUTDIR/B2-smartian-* $OUTDIR/result-B2-compare/smartian/

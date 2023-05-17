@@ -8,13 +8,22 @@ WORKDIR /root/
 # RUN sed -i 's/archive.ubuntu.com/ftp.daumkakao.com/g' /etc/apt/sources.list
 ENV DEBIAN_FRONTEND="noninteractive"
 
-RUN apt-get update && \
-    apt-get -yy install \
+RUN apt-get update
+RUN apt install software-properties-common -y
+RUN add-apt-repository ppa:deadsnakes/ppa -y
+RUN apt install python3.7 -y
+
+RUN echo "alias python=python3.7" >> ~/.bashrc
+RUN echo "alias python3=python3.7" >> ~/.bashrc
+RUN export PATH=${PATH}:/usr/bin/python3.7
+RUN /bin/bash -c "source ~/.bashrc"
+
+RUN apt-get -yy install \
       wget apt-transport-https git unzip \
       build-essential libtool libtool-bin gdb \
       automake autoconf bison flex python sudo vim \
       curl software-properties-common \
-      python3 python3-pip libssl-dev pkg-config \
+      python3-pip libssl-dev pkg-config \
       libsqlite3-0 libsqlite3-dev apt-utils locales \
       python-pip-whl libleveldb-dev python3-setuptools \
       python3-dev pandoc python3-venv \
@@ -68,19 +77,19 @@ WORKDIR /home/test
 ### Install smart contract testing tools
 RUN mkdir /home/test/tools
 
-# Install ilf
-COPY --chown=test:test ./docker-setup/ilf/ /home/test/tools/ilf
-ENV GOPATH=/home/test/tools/ilf/go
-ENV GOROOT=/usr/lib/go-1.10
-ENV PATH=$PATH:$GOPATH/bin
-ENV PATH=$PATH:$GOROOT/bin
-RUN /home/test/tools/ilf/install_ilf.sh
-RUN mv /home/test/tools/ilf/preprocess \
-       /home/test/tools/ilf/go/src/ilf/preprocess
+# # Install ilf
+# COPY --chown=test:test ./docker-setup/ilf/ /home/test/tools/ilf
+# ENV GOPATH=/home/test/tools/ilf/go
+# ENV GOROOT=/usr/lib/go-1.10
+# ENV PATH=$PATH:$GOPATH/bin
+# ENV PATH=$PATH:$GOROOT/bin
+# RUN /home/test/tools/ilf/install_ilf.sh
+# RUN mv /home/test/tools/ilf/preprocess \
+#        /home/test/tools/ilf/go/src/ilf/preprocess
 
 # Install sFuzz
-COPY --chown=test:test ./docker-setup/sFuzz /home/test/tools/sFuzz
-RUN /home/test/tools/sFuzz/install_sFuzz.sh
+# COPY --chown=test:test ./docker-setup/sFuzz /home/test/tools/sFuzz
+# RUN /home/test/tools/sFuzz/install_sFuzz.sh
 
 # Install manticore
 COPY --chown=test:test ./docker-setup/manticore/ /home/test/tools/manticore
@@ -89,19 +98,19 @@ ENV PATH /home/test/.local/bin:$PATH
 ENV LD_LIBRARY_PATH=/usr/local/lib PREFIX=/usr/local HOST_OS=Linux
 
 # Install mythril
-COPY --chown=test:test ./docker-setup/mythril/ /home/test/tools/mythril
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US.en
-ENV LC_ALL en_US.UTF-8
-RUN /home/test/tools/mythril/install_mythril.sh
+# COPY --chown=test:test ./docker-setup/mythril/ /home/test/tools/mythril
+# ENV LANG en_US.UTF-8
+# ENV LANGUAGE en_US.en
+# ENV LC_ALL en_US.UTF-8
+# RUN /home/test/tools/mythril/install_mythril.sh
 
 # Install Smartian
-RUN cd /home/test/tools/ && \
-    git clone https://github.com/SoftSec-KAIST/Smartian.git && \
-    cd Smartian && \
-    git checkout v1.0 && \
-    git submodule update --init --recursive && \
-    make
+# RUN cd /home/test/tools/ && \
+#     git clone https://github.com/SoftSec-KAIST/Smartian.git && \
+#     cd Smartian && \
+#     git checkout v1.0 && \
+#     git submodule update --init --recursive && \
+#     make
 
 # Add scripts for each tool
 COPY --chown=test:test ./docker-setup/tool-scripts/ /home/test/scripts
