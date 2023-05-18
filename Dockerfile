@@ -13,10 +13,9 @@ RUN apt install software-properties-common -y
 RUN add-apt-repository ppa:deadsnakes/ppa -y
 RUN apt install python3.7 -y
 
-RUN echo "alias python=python3.7" >> ~/.bashrc
-RUN echo "alias python3=python3.7" >> ~/.bashrc
-RUN export PATH=${PATH}:/usr/bin/python3.7
-RUN /bin/bash -c "source ~/.bashrc"
+RUN echo "alias python=python3.7" >> ~/.bashrc && \
+    echo "alias python3=python3.7" >> ~/.bashrc && \
+    echo "export PATH=\${PATH}:/usr/bin/python3.7" >> ~/.bashrc
 
 RUN apt-get -yy install \
       wget apt-transport-https git unzip \
@@ -27,14 +26,15 @@ RUN apt-get -yy install \
       libsqlite3-0 libsqlite3-dev apt-utils locales \
       python-pip-whl libleveldb-dev python3-setuptools \
       python3-dev pandoc python3-venv \
-      libgmp-dev libbz2-dev libreadline-dev libsecp256k1-dev locales-all
+      libgmp-dev libbz2-dev libreadline-dev libsecp256k1-dev locales-all \
+      cmake
 RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
 RUN apt-get -yy install nodejs
 RUN locale-gen en_US.UTF-8
 RUN python3 -m pip install -U pip
 RUN python3 -m pip install --no-cache-dir --upgrade pip
 
-# Install .NET Core
+# # Install .NET Core
 RUN wget -q https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb && \
     dpkg -i packages-microsoft-prod.deb && \
     apt-get update && apt-get -yy install dotnet-sdk-5.0 && \
@@ -61,63 +61,63 @@ RUN mv go /usr/lib/go-1.10
 # Install z3
 RUN git clone https://github.com/Z3Prover/z3.git
 WORKDIR /root/z3
-RUN git checkout z3-4.8.6
-RUN python3 scripts/mk_make.py --python
+RUN git checkout z3-4.8.6 && python3 scripts/mk_make.py --python
 WORKDIR /root/z3/build
-RUN make -j8
-RUN make install
+RUN make -j8 && make install
 
-### Prepare a user account
+# Prepare a user account
 
-RUN useradd -ms /bin/bash test
-RUN usermod -aG sudo test
-RUN echo "test ALL=(ALL:ALL) NOPASSWD:ALL" >> /etc/sudoers
+RUN useradd -ms /bin/bash test && usermod -aG sudo test \
+    && echo "test ALL=(ALL:ALL) NOPASSWD:ALL" >> /etc/sudoers
 USER test
 WORKDIR /home/test
+RUN echo "alias python=python3.7" >> ~/.bashrc && \
+    echo "alias python3=python3.7" >> ~/.bashrc && \
+    echo "export PATH=\${PATH}:/usr/bin/python3.7" >> ~/.bashrc
 
-### Install smart contract testing tools
+# Install smart contract testing tools
 RUN mkdir /home/test/tools
 
-# # # Install ilf
-# # COPY --chown=test:test ./docker-setup/ilf/ /home/test/tools/ilf
-# # ENV GOPATH=/home/test/tools/ilf/go
-# # ENV GOROOT=/usr/lib/go-1.10
-# # ENV PATH=$PATH:$GOPATH/bin
-# # ENV PATH=$PATH:$GOROOT/bin
-# # RUN /home/test/tools/ilf/install_ilf.sh
-# # RUN mv /home/test/tools/ilf/preprocess \
-# #        /home/test/tools/ilf/go/src/ilf/preprocess
+# Install ilf
+COPY --chown=test:test ./docker-setup/ilf/ /home/test/tools/ilf
+ENV GOPATH=/home/test/tools/ilf/go
+ENV GOROOT=/usr/lib/go-1.10
+ENV PATH=$PATH:$GOPATH/bin
+ENV PATH=$PATH:$GOROOT/bin
+RUN /home/test/tools/ilf/install_ilf.sh
+# RUN mv /home/test/tools/ilf/preprocess \
+#        /home/test/tools/ilf/go/src/ilf/preprocess
 
-# # Install sFuzz
-# # COPY --chown=test:test ./docker-setup/sFuzz /home/test/tools/sFuzz
-# # RUN /home/test/tools/sFuzz/install_sFuzz.sh
+# # # Install sFuzz
+# # # COPY --chown=test:test ./docker-setup/sFuzz /home/test/tools/sFuzz
+# # # RUN /home/test/tools/sFuzz/install_sFuzz.sh
 
-# Install manticore
-COPY --chown=test:test ./docker-setup/manticore/ /home/test/tools/manticore
-RUN /home/test/tools/manticore/install_manticore.sh
-ENV PATH /home/test/.local/bin:$PATH
-ENV LD_LIBRARY_PATH=/usr/local/lib PREFIX=/usr/local HOST_OS=Linux
+# # Install manticore
+# # COPY --chown=test:test ./docker-setup/manticore/ /home/test/tools/manticore
+# # RUN /home/test/tools/manticore/install_manticore.sh
+# # ENV PATH /home/test/.local/bin:$PATH
+# # ENV LD_LIBRARY_PATH=/usr/local/lib PREFIX=/usr/local HOST_OS=Linux
 
-# # Install mythril
-# # COPY --chown=test:test ./docker-setup/mythril/ /home/test/tools/mythril
-# # ENV LANG en_US.UTF-8
-# # ENV LANGUAGE en_US.en
-# # ENV LC_ALL en_US.UTF-8
-# # RUN /home/test/tools/mythril/install_mythril.sh
+# # # Install mythril
+# # # COPY --chown=test:test ./docker-setup/mythril/ /home/test/tools/mythril
+# # # ENV LANG en_US.UTF-8
+# # # ENV LANGUAGE en_US.en
+# # # ENV LC_ALL en_US.UTF-8
+# # # RUN /home/test/tools/mythril/install_mythril.sh
 
-# # Install Smartian
-# # RUN cd /home/test/tools/ && \
-# #     git clone https://github.com/SoftSec-KAIST/Smartian.git && \
-# #     cd Smartian && \
-# #     git checkout v1.0 && \
-# #     git submodule update --init --recursive && \
-# #     make
+# # # Install Smartian
+# # # RUN cd /home/test/tools/ && \
+# # #     git clone https://github.com/SoftSec-KAIST/Smartian.git && \
+# # #     cd Smartian && \
+# # #     git checkout v1.0 && \
+# # #     git submodule update --init --recursive && \
+# # #     make
 
-# # Add scripts for each tool
-# COPY --chown=test:test ./docker-setup/tool-scripts/ /home/test/scripts
+# # # Add scripts for each tool
+# # COPY --chown=test:test ./docker-setup/tool-scripts/ /home/test/scripts
 
-# ### Prepare benchmarks
+# # ### Prepare benchmarks
 
-# COPY --chown=test:test ./benchmarks /home/test/benchmarks
+# # COPY --chown=test:test ./benchmarks /home/test/benchmarks
 
-# CMD ["/bin/bash"]
+# # CMD ["/bin/bash"]

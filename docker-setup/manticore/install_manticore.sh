@@ -2,9 +2,8 @@
 
 set -e
 python3 --version
-python3.7 -m venv /home/test/tools/manticore/venv --without-pip
+python3.7 -m venv /home/test/tools/manticore/venv 
 source /home/test/tools/manticore/venv/bin/activate
-curl https://bootstrap.pypa.io/get-pip.py | python3
 python3.7 -m pip install wheel
 python3.7 -m pip install manticore
 
