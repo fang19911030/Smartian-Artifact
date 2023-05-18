@@ -7,14 +7,14 @@ source /home/test/tools/ilf/venv/bin/activate
 python3 -m pip install wheel
 python3 -m pip install z3-solver
 
-# cd /home/test/tools/ilf/go/src
+cd /home/test/tools/ilf/go/src
 
-# # copy ilf
-# git clone https://github.com/eth-sri/ilf.git
-# cd /home/test/tools/ilf/go/src/ilf
-# git checkout 9e8e3015a48783634658c8e748f113d2da2628c7
-# patch -p1 < ../ilf.patch
-# cd /home/test/tools/ilf/go/src
+# copy ilf
+git clone https://github.com/eth-sri/ilf.git
+cd /home/test/tools/ilf/go/src/ilf
+git checkout 9e8e3015a48783634658c8e748f113d2da2628c7
+patch -p1 < ../ilf.patch
+cd /home/test/tools/ilf/go/src
 
 # # install go-ethereum
 # mkdir -p /home/test/tools/ilf/go/src/github.com/ethereum/
