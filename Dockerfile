@@ -85,18 +85,18 @@ ENV GOROOT=/usr/lib/go-1.10
 ENV PATH=$PATH:$GOPATH/bin
 ENV PATH=$PATH:$GOROOT/bin
 RUN /home/test/tools/ilf/install_ilf.sh
-# RUN mv /home/test/tools/ilf/preprocess \
-#        /home/test/tools/ilf/go/src/ilf/preprocess
+RUN mv /home/test/tools/ilf/preprocess \
+       /home/test/tools/ilf/go/src/ilf/preprocess
 
-# # # Install sFuzz
-# # # COPY --chown=test:test ./docker-setup/sFuzz /home/test/tools/sFuzz
-# # # RUN /home/test/tools/sFuzz/install_sFuzz.sh
+# Install sFuzz
+COPY --chown=test:test ./docker-setup/sFuzz /home/test/tools/sFuzz
+RUN /home/test/tools/sFuzz/install_sFuzz.sh
 
-# # Install manticore
-# # COPY --chown=test:test ./docker-setup/manticore/ /home/test/tools/manticore
-# # RUN /home/test/tools/manticore/install_manticore.sh
-# # ENV PATH /home/test/.local/bin:$PATH
-# # ENV LD_LIBRARY_PATH=/usr/local/lib PREFIX=/usr/local HOST_OS=Linux
+# Install manticore
+COPY --chown=test:test ./docker-setup/manticore/ /home/test/tools/manticore
+RUN /home/test/tools/manticore/install_manticore.sh
+ENV PATH /home/test/.local/bin:$PATH
+ENV LD_LIBRARY_PATH=/usr/local/lib PREFIX=/usr/local HOST_OS=Linux
 
 # # # Install mythril
 # # # COPY --chown=test:test ./docker-setup/mythril/ /home/test/tools/mythril
@@ -105,13 +105,13 @@ RUN /home/test/tools/ilf/install_ilf.sh
 # # # ENV LC_ALL en_US.UTF-8
 # # # RUN /home/test/tools/mythril/install_mythril.sh
 
-# # # Install Smartian
-# # # RUN cd /home/test/tools/ && \
-# # #     git clone https://github.com/SoftSec-KAIST/Smartian.git && \
-# # #     cd Smartian && \
-# # #     git checkout v1.0 && \
-# # #     git submodule update --init --recursive && \
-# # #     make
+# Install Smartian
+RUN cd /home/test/tools/ && \
+    git clone https://github.com/SoftSec-KAIST/Smartian.git && \
+    cd Smartian && \
+    git checkout v1.0 && \
+    git submodule update --init --recursive && \
+    make
 
 # # # Add scripts for each tool
 # # COPY --chown=test:test ./docker-setup/tool-scripts/ /home/test/scripts
