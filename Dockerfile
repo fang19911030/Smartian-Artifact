@@ -113,11 +113,12 @@ RUN cd /home/test/tools/ && \
     git submodule update --init --recursive && \
     make
 
-# # # Add scripts for each tool
-# # COPY --chown=test:test ./docker-setup/tool-scripts/ /home/test/scripts
+# Add scripts for each tool
+COPY --chown=test:test ./docker-setup/tool-scripts/ /home/test/scripts
 
-# # ### Prepare benchmarks
+COPY --chown=test:test ./scripts /home/test/scripts 
+### Prepare benchmarks
 
-# # COPY --chown=test:test ./benchmarks /home/test/benchmarks
+COPY --chown=test:test ./benchmarks /home/test/benchmarks
 
-# # CMD ["/bin/bash"]
+CMD ["/bin/bash"]

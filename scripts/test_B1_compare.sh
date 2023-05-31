@@ -24,6 +24,8 @@ mkdir -p $OUTDIR/result-B1-compare
 for i in $(seq $1); do
     python $SCRIPTDIR/run_experiment.py B1-noarg smartian 3600
     python $SCRIPTDIR/run_experiment.py B1-noarg sFuzz 3600
+    python $SCRIPTDIR/run_experiment.py B1-noarg manticore 3600 B1
+    python $SCRIPTDIR/run_experiment.py B1-noarg mythril 3600
 done
 mkdir -p $OUTDIR/result-B1-compare/smartian
 mv $OUTDIR/B1-noarg-smartian-* $OUTDIR/result-B1-compare/smartian/
