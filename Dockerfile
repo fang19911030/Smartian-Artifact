@@ -116,9 +116,6 @@ RUN cd /home/test/tools/ && \
 # Add scripts for each tool
 COPY --chown=test:test ./docker-setup/tool-scripts/ /home/test/scripts
 
-COPY --chown=test:test ./scripts /home/test/scripts 
-### Prepare benchmarks
-
 COPY --chown=test:test ./benchmarks /home/test/benchmarks
 
 CMD ["/bin/bash"]
